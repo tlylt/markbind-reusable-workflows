@@ -1,7 +1,10 @@
-name: Publish Fork PR Site
+name: Preview Fork PR
 
 on:
   workflow_call:
+    secrets:
+      token: # SURGE_TOKEN
+        required: true
 
 jobs:
   build:
@@ -33,7 +36,7 @@ jobs:
           npm i -g surge
           surge --project ./_site --domain ${{ steps.pr-url.outputs.ACTIONS_PREVIEW_URL }}
         env:
-          SURGE_TOKEN: ${{ secrets.SURGE_TOKEN }}
+          SURGE_TOKEN: ${{ secrets.token }}
       - name: Find existing PR preview link comment
         uses: peter-evans/find-comment@v1
         id: fc

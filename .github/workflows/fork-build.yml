@@ -1,4 +1,4 @@
-name: Build Fork PR Site
+name: Build Fork PR
 
 on:
   workflow_call:
