@@ -1,12 +1,29 @@
-name: Build Fork PR
+name: Build site from Fork
 
 on:
   workflow_call:
+    inputs:
+      version:
+        description: the version of MarkBind to use. e.g. 3.1.1
+        default: 'latest'
+        type: string
+      rootDirectory:
+        description: read source files from the specified directory
+        default: '.'
+        type: string
+      baseUrl:
+        description: the base URL relative to your domain
+        default: ''
+        type: string
+      siteConfig:
+        description: the site config file to use
+        default: './site.json'
+        type: string
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    steps:        
+    steps:
       - uses: actions/checkout@v2
       - name: Install Node
         uses: actions/setup-node@v2
@@ -14,19 +31,23 @@ jobs:
           node-version: 12
       - name: Build site
         run: |
-          npm install -g markbind-cli
-          markbind build
+          npm install -g markbind-cli@${{ inputs.version }}
+          markbind build ${{ inputs.rootDirectory }} \
+          --baseUrl ${{ inputs.baseUrl }} \
+          --site-config ${{ inputs.siteConfig }}
       - name: Save PR number and HEAD commit
         if: ${{ success() && github.event_name == 'pull_request' }}
         run: |
           mkdir -p ./pr
           echo ${{ github.event.number }} > ./pr/NUMBER
           echo ${{ github.event.pull_request.head.sha }} > ./pr/SHA
-      - name: Upload artifacts 
+      - name: Upload artifacts
         if: ${{ success() && github.event_name == 'pull_request' }}
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: site-artifacts
+          retention-days: 1
+          if-no-files-found: error
           path: |
             ./_site
             ./pr
