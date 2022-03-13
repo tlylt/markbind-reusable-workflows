@@ -17,7 +17,7 @@ on:
         type: string
       siteConfig:
         description: the site config file to use
-        default: './site.json'
+        default: 'site.json'
         type: string
 
 jobs:
