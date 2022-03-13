@@ -10,6 +10,7 @@ on:
       baseUrl:
         description: something that can easily identify your site
         required: true
+        type: string
 
 jobs:
   build:
