@@ -29,12 +29,14 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: 12
-      - name: Build with markbind-cli@master
+      - name: Install with markbind-cli@master
         if: inputs.version == 'master'
         uses: actions/checkout@v3
         with:
           repository: MarkBind/markbind
           path: markbind-cli
+      - name: Build with markbind-cli@master
+        if: inputs.version == 'master'
         run: |
           cd markbind-cli
           npm run setup
