@@ -39,10 +39,11 @@ jobs:
         if: inputs.version == 'master'
         run: |
           cd markbind-cli
-          npm run setup
-          npm run build:web
+          npm run setup && npm run build:web
+          ls -a
           cd ..
-          node markbind-cli/packages/cli/index.js build ${{ inputs.rootDirectory }} \
+          ls -a
+          node ./markbind-cli/packages/cli/index.js build ${{ inputs.rootDirectory }} \
           --baseUrl ${{ inputs.baseUrl }} \
           --site-config ${{ inputs.siteConfig }}
       - name: Build with released version of markbind-cli
