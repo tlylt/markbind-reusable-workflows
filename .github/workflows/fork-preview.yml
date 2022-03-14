@@ -9,6 +9,7 @@ on:
     inputs:
       previewName:
         description: something that can easily identify your site
+        required: false
         default: ${{ github.event.repoistory.name}}
         type: string
 
