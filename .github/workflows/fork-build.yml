@@ -24,20 +24,29 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Install Node
         uses: actions/setup-node@v2
         with:
           node-version: 12
-      - name: Build site
+      - name: Build with markbind-cli@master
+        if: inputs.version == 'master'
+        uses: actions/checkout@v3
+        with:
+          repository: MarkBind/markbind
+          path: markbind-cli
         run: |
-          if ${{ inputs.version }}='master'
-          then
-            echo "Install markbind-cli@master"
-            npm install -g 'https://gitpkg.now.sh/MarkBind/markbind/packages/cli?master'
-          else
-            npm install -g markbind-cli@${{ inputs.version }}
-          fi
+          cd markbind-cli
+          npm run setup
+          npm run build:web
+          cd ..
+          node markbind-cli/packages/cli/index.js build ${{ inputs.rootDirectory }} \
+          --baseUrl ${{ inputs.baseUrl }} \
+          --site-config ${{ inputs.siteConfig }}
+      - name: Build with released version of markbind-cli
+        if: inputs.version != 'master'
+        run: |
+          npm install -g markbind-cli@${{ inputs.version }}
           markbind build ${{ inputs.rootDirectory }} \
           --baseUrl ${{ inputs.baseUrl }} \
           --site-config ${{ inputs.siteConfig }}
