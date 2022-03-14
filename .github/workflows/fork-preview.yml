@@ -9,7 +9,6 @@ on:
     inputs:
       previewName:
         description: something that can easily identify your site
-        required: false
         default: ${{ github.event.repoistory.name}}
         type: string
 
@@ -41,7 +40,7 @@ jobs:
       - name: Install surge and deploy PR to surge
         run: |
           npm i -g surge
-          surge --project ./_site --domain ${{ steps.pr-url.outputs.ACTIONS_PREVIEW_URL }}
+          surge --project ./curr-repo/_site --domain ${{ steps.pr-url.outputs.ACTIONS_PREVIEW_URL }}
         env:
           SURGE_TOKEN: ${{ secrets.token }}
       - name: Find existing PR preview link comment

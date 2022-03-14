@@ -45,10 +45,11 @@ jobs:
           npm run setup && npm run build:web
           cd ../curr-repo
           node ../markbind-cli/packages/cli/index.js \
-          build ${{ inputs.rootDirectory }} ../_site\
+          build ${{ inputs.rootDirectory }} \
           --baseUrl ${{ inputs.baseUrl }} \
           --site-config ${{ inputs.siteConfig }}
           cd ..
+          echo "Great success!"
       - name: Build with released version of markbind-cli
         if: inputs.version != 'master'
         run: |
@@ -72,5 +73,5 @@ jobs:
           retention-days: 1
           if-no-files-found: error
           path: |
-            ./_site
+            ./curr-repo/_site
             ./pr
