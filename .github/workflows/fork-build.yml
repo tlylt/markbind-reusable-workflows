@@ -25,6 +25,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+          path: curr-repo
       - name: Install Node
         uses: actions/setup-node@v2
         with:
@@ -41,17 +43,21 @@ jobs:
         run: |
           cd markbind-cli
           npm run setup && npm run build:web
-          cd ..
-          node ./markbind-cli/packages/cli/index.js build ${{ inputs.rootDirectory }} \
+          cd ../curr-repo
+          node ../markbind-cli/packages/cli/index.js \
+          build ${{ inputs.rootDirectory }} ../_site\
           --baseUrl ${{ inputs.baseUrl }} \
           --site-config ${{ inputs.siteConfig }}
+          cd ..
       - name: Build with released version of markbind-cli
         if: inputs.version != 'master'
         run: |
           npm install -g markbind-cli@${{ inputs.version }}
+          cd curr-repo
           markbind build ${{ inputs.rootDirectory }} \
           --baseUrl ${{ inputs.baseUrl }} \
           --site-config ${{ inputs.siteConfig }}
+          cd ..
       - name: Save PR number and HEAD commit
         if: ${{ success() && github.event_name == 'pull_request' }}
         run: |
