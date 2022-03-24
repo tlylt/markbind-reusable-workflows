@@ -7,9 +7,9 @@ on:
         description: the token for deployment service
         required: true
     inputs:
-      previewName:
-        description: something that can easily identify your site
-        default: ${{ github.event.repoistory.name}}
+      domain:
+        description: the domain to use
+        default: "${{ github.event.repoistory.name}}.surge.sh"
         type: string
 
 jobs:
@@ -35,7 +35,7 @@ jobs:
       - name: Build PR preview url
         id: pr-url
         run: |
-          PR_URL="https://pr-${{ steps.pr-number.outputs.ACTIONS_PR_NUMBER }}-${{ inputs.previewName }}.surge.sh/"
+          PR_URL="https://pr-${{ steps.pr-number.outputs.ACTIONS_PR_NUMBER }}-${{ inputs.domain }}"
           echo '::set-output name=ACTIONS_PREVIEW_URL::'$PR_URL
       - name: Install surge and deploy PR to surge
         run: |
