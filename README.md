@@ -60,8 +60,7 @@ The directory to read source files from.
 The base URL relative to your domain.
 - '/reponame'
   - Defaults to the value of `baseUrl` in your `site.json` file
-  - This is important for deploying your site to GitHub Pages
-  - Note that you will need to specify this or in the site config file (typically the `site.json`), in order to configure the relative URL correctly.
+  - Note that you will need to specify this or in the site config file (typically the `site.json`), if you wish to configure the relative URL correctly.
 
 ### siteConfig (MarkBind CLI arguments)
 The site config file to use.
