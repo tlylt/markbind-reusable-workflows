@@ -55,7 +55,7 @@ jobs:
       - name: Build site
         run: |
           BASEURL="--baseUrl ${{ inputs.baseUrl }}" 
-          if [[ ${{ inputs.baseUrl }} == "unsetFlag" ]]; then
+          if [[ "${{ inputs.baseUrl }}" == "unsetFlag" ]]; then
             BASEURL=""
             echo "Default baseUrl to the config file attribute"
           fi
