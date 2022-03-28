@@ -134,3 +134,23 @@ jobs:
     secrets:
       token: ${{ secrets.SURGE_TOKEN }}
 ```
+
+### Unpublish PR preview site
+```yaml
+name: Unpublish preview site
+
+on:
+  pull_request_target:
+    types: [closed]
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Unpublish from Surge
+    uses: tlylt/markbind-reusable-workflows/.github/workflows/unpublish-preview.yml@main
+    with:
+      domain: "mb-test.surge.sh"
+    secrets:
+      token: ${{ secrets.SURGE_TOKEN }}
+```
