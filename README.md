@@ -14,32 +14,12 @@ Option                                                 | Required |             
 
 ### fork-preview
 
-Option            | Required | Default | Remarks
-:-----------------|:--------:|--------:|-----------------------------------------
-[token](#token)   |   yes    |         | The token to be used for the service
-[domain](#domain) |   yes    |         | The domain that the site is available at
+Option            | Required | Remarks
+:-----------------|:--------:|-----------------------------------------
+[token](#token)   |   yes    | The token to be used for the service
+[domain](#domain) |   yes    | The domain that the site is available at
 
 ## Option Details
-
-### token
-Token for Surge.sh
-  - `${{ secrets.SURGE_TOKEN }}`
-    - `SURGE_TOKEN` is the environment secret name
-  - Require registration with an email address
-  - After retrieving the token, put the token as a repository secret in your repository
-  - See [here](https://markbind.org/userGuide/deployingTheSite.html#previewing-prs-using-surge) for a detailed guide on how to retrieve the token
-
-### domain
-The domain that the site is available at.
-- A surge.sh subdomain
-  - `'<subDomain>.surge.sh'`
-  - Surge allows you to specify a subdomain for free as long as it has not been taken up by others. You have to ensure that the `<subDomain>` is unique. 
-  - A possible subdomain to use is your repository name: e.g. `mb-test.surge.sh`
-- Additional notes
-  - for PR preview purposes, the domain you specify will automatically be prefixed with 'pr-x-', where 'x' is the GitHub event number
-    - E.g. `'pr-x-<domain>'` (and hence `'pr-1-mb-test.surge.sh'`)
-  - Custom domain does not work with PR preview
-  - This action will not automatically cleanup merged PR deployments. Follow this [instruction](https://surge.sh/help/tearing-down-a-project) to manually tear down the deployed site if required
 
 ### version
 The MarkBind version to use to build the site.
@@ -85,6 +65,26 @@ The site config file to use.
   - If your site config file is not named `site.json`, specify the name here
     - E.g. `'ug-site.json'`
 
+### token
+Token for Surge.sh
+  - `${{ secrets.SURGE_TOKEN }}`
+    - `SURGE_TOKEN` is the environment secret name
+  - Require registration with an email address
+  - After retrieving the token, put the token as a repository secret in your repository
+  - See [here](https://markbind.org/userGuide/deployingTheSite.html#previewing-prs-using-surge) for a detailed guide on how to retrieve the token
+
+### domain
+The domain that the site is available at.
+- A surge.sh subdomain
+  - `'<subDomain>.surge.sh'`
+  - Surge allows you to specify a subdomain for free as long as it has not been taken up by others. You have to ensure that the `<subDomain>` is unique. 
+  - A possible subdomain to use is your repository name: e.g. `mb-test.surge.sh`
+- Additional notes
+  - for PR preview purposes, the domain you specify will automatically be prefixed with 'pr-x-', where 'x' is the GitHub event number
+    - E.g. `'pr-x-<domain>'` (and hence `'pr-1-mb-test.surge.sh'`)
+  - Custom domain does not work with PR preview
+  - This action will not automatically cleanup merged PR deployments. Follow this [instruction](https://surge.sh/help/tearing-down-a-project) to manually tear down the deployed site if required
+
 ## Usage
 With `fork-build.yml` and `fork-preview.yml`, you can establish a secure workflow that builds your MarkBind site triggered by a fork PR.
 Then, the site artifact will be uploaded and deployed for preview. Note that the choice of using two separate workflows is to reduce possible security issues, as [recommended](https://securitylab.github.com/research/github-actions-preventing-pwn-requests/) by the GitHub Security Lab.
@@ -103,7 +103,7 @@ on:
     branches:
       - main
 
-# cancel multiple runs at the same time, can be removed if you don't need it
+# cancel multiple runs at the same time, can be removed if you don't want it
 concurrency: 
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
