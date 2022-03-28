@@ -5,72 +5,91 @@ A list of GitHub Reusable Workflows that help improve your CI/CD with a MarkBind
 
 ### fork-build
 
-Option        | Required |                      Default | Remarks
-:-------------|:--------:|-----------------------------:|----------------------------------------------
-version       |    no    |                     'latest' | The MarkBind version to use to build the site
-rootDirectory |    no    |                          '.' | The directory to read source files from
-baseUrl       |    no    | Value specified in site.json | The base URL relative to your domain
-siteConfig    |    no    |                  'site.json' | The site config file to use
+Option                                                 | Required |                      Default | Remarks
+:------------------------------------------------------|:--------:|-----------------------------:|----------------------------------------------
+[version](#version)                                    |    no    |                   `'latest'` | The MarkBind version to use to build the site
+[rootDirectory](#rootdirectory-markbind-cli-arguments) |    no    |                        `'.'` | The directory to read source files from
+[baseUrl](#baseurl-markbind-cli-arguments)             |    no    | Value specified in site.json | The base URL relative to your domain
+[siteConfig](#siteconfig-markbind-cli-arguments)       |    no    |                `'site.json'` | The site config file to use
 
 ### fork-preview
 
-Option | Required | Default | Remarks
-:------|:--------:|--------:|-----------------------------------------
-token  |   yes    |         | The token to be used for the service
-domain |    no    |      '' | The domain that the site is available at
+Option            | Required | Default | Remarks
+:-----------------|:--------:|--------:|-----------------------------------------
+[token](#token)   |   yes    |         | The token to be used for the service
+[domain](#domain) |   yes    |         | The domain that the site is available at
 
 ## Option Details
 
 ### token
 Token for Surge.sh
-- Example: `${{ secrets.SURGE_TOKEN }}`
-  - `SURGE_TOKEN` is the environment secret name
-- Require registration with an email address
-- After retrieving the token, put the token as a repository secret in your
-- See [here](https://markbind.org/userGuide/deployingTheSite.html#previewing-prs-using-surge) for a detailed guide on how to retrieve the token
+  - `${{ secrets.SURGE_TOKEN }}`
+    - `SURGE_TOKEN` is the environment secret name
+  - Require registration with an email address
+  - After retrieving the token, put the token as a repository secret in your repository
+  - See [here](https://markbind.org/userGuide/deployingTheSite.html#previewing-prs-using-surge) for a detailed guide on how to retrieve the token
 
 ### domain
-The domain that the site is available at. Surge.sh allows you to specify a subdomain as long as it is not taken up by others.
-
-- 'xxx.surge.sh'
-  - A typical domain that you can specify. You have to ensure that 'xxx' is unique. Read [here](https://surge.sh/help/adding-a-custom-domain) on how to configure a custom domain with Surge.sh
-  - Note that for PR Preview purposes, the domain will be prefixed with 'pr-x', which 'x' is the GitHub event number
-  - E.g. 'pr-1.xxx.surge.sh' where 'xxx.surge.sh' is what you specified as the domain
+The domain that the site is available at.
+- A surge.sh subdomain
+  - `'<subDomain>.surge.sh'`
+  - Surge allows you to specify a subdomain for free as long as it has not been taken up by others. You have to ensure that the `<subDomain>` is unique. 
+  - A possible subdomain to use is your repository name: e.g. `mb-test.surge.sh`
+- Additional notes
+  - for PR preview purposes, the domain you specify will automatically be prefixed with 'pr-x-', where 'x' is the GitHub event number
+    - E.g. `'pr-x-<domain>'` (and hence `'pr-1-mb-test.surge.sh'`)
+  - Custom domain does not work with PR preview
+  - This action will not automatically cleanup merged PR deployments. Follow this [instruction](https://surge.sh/help/tearing-down-a-project) to manually tear down the deployed site if required
 
 ### version
 The MarkBind version to use to build the site.
-- 'latest'
+- Latest
+  - `'latest'`
   - This is the latest published version of MarkBind
-- 'master'
-  - This is the latest, possibly unpublished version of MarkBind
-- 'X.Y.Z'
+- Development
+  - `'development'`
+  - This is the latest, possibly unpublished version of MarkBind in development
+- Any valid version
+  - `'X.Y.Z'`
   - This is the version of MarkBind with the specified version number
-  - A sample version number is '3.1.1'
+  - E.g. `'3.1.1'`
+- Any valid version range
+  - Internally the action calls [`npm install`](https://docs.npmjs.com/cli/v6/commands/npm-install) to install the specified version of MarkBind
+  - Hence, a version range such as `'>=3.0.0'` (or semantic versioning like `'^3.1.1'`) is also valid
 
 ### rootDirectory (MarkBind CLI arguments)
 The directory to read source files from.
-- '.'
+- Root
+  - `'.'`
   - This is the default value
   - This is for the case that your source files of the MarkBind site are in the root directory of the repository
-- './path/to/directory'
+- Any subdirectory
+  - `'./path/to/directory'`
   - This is for the case that your source files of the MarkBind site are in a subdirectory of the repository
-  - A sample path is './docs'
-
+    - E.g. `'./docs'`
 ### baseUrl (MarkBind CLI arguments)
 The base URL relative to your domain.
-- '/reponame'
-  - Defaults to the value of `baseUrl` in your `site.json` file
-  - Note that you will need to specify this or in the site config file (typically the `site.json`), if you wish to configure the relative URL correctly.
+- Default
+  - The value of `baseUrl` in the site config file (typically `site.json`)
+- Any valid base URL
+  - For GitHub Pages, you will need to specify this here or in the site config file, in order to configure the relative URL correctly.
+    - e.g. `'/reponame'`
+  - For Surge, you will need to ensure that it's specfied as `''` here or in the site config file.
 
 ### siteConfig (MarkBind CLI arguments)
 The site config file to use.
-- 'site.json'
+- Default site config file
+  - `'site.json'`
   - This is the default value
+- Name of your site config file
+  - If your site config file is not named `site.json`, specify the name here
+    - E.g. `'ug-site.json'`
+
 ## Usage
 With `fork-build.yml` and `fork-preview.yml`, you can establish a secure workflow that builds your MarkBind site triggered by a fork PR.
 Then, the site artifact will be uploaded and deployed for preview. Note that the choice of using two separate workflows is to reduce possible security issues, as [recommended](https://securitylab.github.com/research/github-actions-preventing-pwn-requests/) by the GitHub Security Lab.
 
-In your repository, you will need to add two workflows to `.github/workflows`.
+In your repository, you will need to add two workflows to the `.github/workflows` folder.
 - The first workflow being `fork-build.yml` will be triggered by a pull request.
 - The second workflow being `fork-preview.yml` will be triggered whenever `fork-build` is completed.
 
@@ -81,6 +100,8 @@ name: Build Fork PR
 # no access to secrets
 on:
   pull_request:
+    branches:
+      - main
 
 # cancel multiple runs at the same time, can be removed if you don't need it
 concurrency: 
@@ -106,10 +127,10 @@ on:
 jobs:
   on-success:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
-    name: Deploying to surge
+    name: Deploying to Surge
     uses: tlylt/markbind-reusable-workflows/.github/workflows/fork-preview.yml@main
     with:
-      domain: "mb-test/surge.sh"
+      domain: "mb-test.surge.sh"
     secrets:
       token: ${{ secrets.SURGE_TOKEN }}
 ```
