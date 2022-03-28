@@ -103,7 +103,7 @@ on:
     branches:
       - main
 
-# cancel multiple runs at the same time, can be removed if you don't want it
+# cancel multiple runs at the same time, can be removed if you don't need it
 concurrency: 
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true

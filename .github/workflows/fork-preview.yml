@@ -9,7 +9,7 @@ on:
     inputs:
       domain:
         description: the domain to use
-        default: "${{ github.event.repoistory.name}}.surge.sh"
+        required: true
         type: string
 
 jobs:
