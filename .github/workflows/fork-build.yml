@@ -11,10 +11,6 @@ on:
         description: read source files from the specified directory
         default: '.'
         type: string
-      baseUrl:
-        description: the base URL relative to your domain
-        default: 'unsetFlag' # a flag indicating that baseUrl defaults to the one specified in site.json config file
-        type: string
       siteConfig:
         description: the site config file to use
         default: 'site.json'
@@ -23,6 +19,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
     steps:
       - uses: actions/checkout@v3
         with:
@@ -46,25 +45,23 @@ jobs:
           cd packages/cli
           npm link
           cd ../../..
-        shell: bash
       - name: Install a released version of markbind-cli
         if: inputs.version != 'development'
         run: |
           npm install -g markbind-cli@${{ inputs.version }}
-        shell: bash
       - name: Build site
         run: |
-          BASEURL="--baseUrl ${{ inputs.baseUrl }}" 
-          if [[ "${{ inputs.baseUrl }}" == "unsetFlag" ]]; then
-            BASEURL=""
-            echo "Default baseUrl to the config file attribute"
-          fi
           cd curr-repo
           markbind build ${{ inputs.rootDirectory }} ./_site \
-          $BASEURL --site-config ${{ inputs.siteConfig }}
+          --baseUrl --site-config ${{ inputs.siteConfig }}
           cd ..
           echo "Site Built!"
-        shell: bash
+      - name: Check build status
+        run: |
+          if [ ! -d "./curr-repo/_site" ]; then
+            echo "Build Error"
+            exit 1
+          fi
       - name: Save PR number and HEAD commit
         if: ${{ success() && github.event_name == 'pull_request' }}
         run: |

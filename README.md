@@ -9,7 +9,6 @@ Option                                                 | Required |             
 :------------------------------------------------------|:--------:|-----------------------------:|----------------------------------------------
 [version](#version)                                    |    no    |                   `'latest'` | The MarkBind version to use to build the site
 [rootDirectory](#rootdirectory-markbind-cli-arguments) |    no    |                        `'.'` | The directory to read source files from
-[baseUrl](#baseurl-markbind-cli-arguments)             |    no    | Value specified in site.json | The base URL relative to your domain
 [siteConfig](#siteconfig-markbind-cli-arguments)       |    no    |                `'site.json'` | The site config file to use
 
 ### fork-preview
@@ -47,14 +46,6 @@ The directory to read source files from.
   - `'./path/to/directory'`
   - This is for the case that your source files of the MarkBind site are in a subdirectory of the repository
     - E.g. `'./docs'`
-### baseUrl (MarkBind CLI arguments)
-The base URL relative to your domain.
-- Default
-  - The value of `baseUrl` in the site config file (typically `site.json`)
-- Any valid base URL
-  - For GitHub Pages, you will need to specify this here or in the site config file, in order to configure the relative URL correctly.
-    - e.g. `'/reponame'`
-  - For Surge, you will need to ensure that it's specfied as `''` here or in the site config file.
 
 ### siteConfig (MarkBind CLI arguments)
 The site config file to use.
