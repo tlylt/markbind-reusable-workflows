@@ -11,7 +11,7 @@ Option                                                 | Required |             
 [rootDirectory](#rootdirectory-markbind-cli-arguments) |    no    |                        `'.'` | The directory to read source files from
 [siteConfig](#siteconfig-markbind-cli-arguments)       |    no    |                `'site.json'` | The site config file to use
 
-### fork-preview
+### fork-preview & unpublish-preview
 
 Option            | Required | Remarks
 :-----------------|:--------:|-----------------------------------------
@@ -84,6 +84,7 @@ In your repository, you will need to add two workflows to the `.github/workflows
 - The first workflow being `fork-build.yml` will be triggered by a pull request.
 - The second workflow being `fork-preview.yml` will be triggered whenever `fork-build` is completed.
 
+1. Create a `fork-build.yml`
 ```yaml
 name: Build Fork PR
 
@@ -94,7 +95,7 @@ on:
     branches:
       - main
 
-# cancel multiple runs at the same time, can be removed if you don't need it
+# cancel multiple runs at the same time, can be removed if you don't want it
 concurrency: 
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -107,6 +108,7 @@ jobs:
       version: "3.1.1"
 ```
 
+2. Create a `fork-preview.yml`
 ```yaml
 name: Preview Fork PR
 
@@ -127,6 +129,13 @@ jobs:
 ```
 
 ### Unpublish PR preview site
+
+By default, the site will be published to surge.sh and will be available for preview. These site will not be deleted when the PR is merged. However, if you wish to unpublish the site whenever the PR is merged/closed, you can use the following workflow.
+
+Note that this workflow uses the `pull_request_target` in order to expose the secrets to the workflow triggered by a fork. This is still secure (admittedly, not as secure as not exposing the secrets at all) as the workflow does not require dangerous processing, say building or running the content of the PR. Read [Keeping your GitHub Actions and workflows secure Part 1: Preventing pwn requests](https://securitylab.github.com/research/github-actions-preventing-pwn-requests/) if you want to learn more about this.
+
+You may also consider manually teardown a surge site by following the [instruction](https://surge.sh/help/tearing-down-a-project), if required.
+
 ```yaml
 name: Unpublish preview site
 
