@@ -77,12 +77,17 @@ The domain that the site is available at.
   - This action will not automatically cleanup merged PR deployments. Follow this [instruction](https://surge.sh/help/tearing-down-a-project) to manually tear down the deployed site if required
 
 ## Usage
+
 With `fork-build.yml` and `fork-preview.yml`, you can establish a secure workflow that builds your MarkBind site triggered by a fork PR.
 Then, the site artifact will be uploaded and deployed for preview. Note that the choice of using two separate workflows is to reduce possible security issues, as [recommended](https://securitylab.github.com/research/github-actions-preventing-pwn-requests/) by the GitHub Security Lab.
 
 In your repository, you will need to add two workflows to the `.github/workflows` folder.
 - The first workflow being `fork-build.yml` will be triggered by a pull request.
+  - Adjust the target branch accordingly
+    - The sample workflow below will be triggered by PR against the `main` branch
 - The second workflow being `fork-preview.yml` will be triggered whenever `fork-build` is completed.
+  - Adjust the domain accordingly
+    - The sample workflow below publish to `pr-x-mb-test.surge.sh`
 
 1. Create a `fork-build.yml`
 ```yaml
@@ -130,11 +135,17 @@ jobs:
 
 ### Unpublish PR preview site
 
+*(This is Optional)*
+
 By default, the site will be published to surge.sh and will be available for preview. These site will not be deleted when the PR is merged. However, if you wish to unpublish the site whenever the PR is merged/closed, you can use the following workflow.
 
 Note that this workflow uses the `pull_request_target` in order to expose the secrets to the workflow triggered by a fork. This is still secure (admittedly, not as secure as not exposing the secrets at all) as the workflow does not require dangerous processing, say building or running the content of the PR. Read [Keeping your GitHub Actions and workflows secure Part 1: Preventing pwn requests](https://securitylab.github.com/research/github-actions-preventing-pwn-requests/) if you want to learn more about this.
 
 You may also consider manually teardown a surge site by following the [instruction](https://surge.sh/help/tearing-down-a-project), if required.
+
+1. Create a `unpublish-preview.yml`
+   - Adjust the target branch accordingly
+      - The sample workflow below will be triggered by PR against the `main` branch
 
 ```yaml
 name: Unpublish preview site
